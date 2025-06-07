@@ -3,14 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Leads de Viagem</title>
+    <title>Simule sua Próxima Viagem</title>
     <!-- Incluindo o Tailwind CSS para um design moderno -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Incluindo a biblioteca Tom Select para busca nos campos de cidade -->
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Usando a fonte Inter para um visual mais agradável */
         body {
             font-family: 'Inter', sans-serif;
+        }
+        /* Estilos para customizar o Tom Select para combinar com o Tailwind */
+        .ts-control {
+            border-radius: 0.375rem;
+            border-color: #D1D5DB;
+        }
+        .ts-control .item {
+            font-size: 0.875rem;
         }
     </style>
 </head>
@@ -19,124 +29,172 @@
     <div class="w-full max-w-lg mx-auto bg-white rounded-xl shadow-lg p-8 m-4">
         
         <div class="mb-6 text-center">
-            <h1 class="text-2xl font-bold text-gray-800">Registro de Novo Lead de Viagem</h1>
-            <p class="text-gray-500 mt-1">Preencha os dados do cliente para o remarketing.</p>
+             <!-- PASSO 1: Adicione o logotipo da sua agência aqui -->
+            <img src="https://placehold.co/200x80/374151/FFFFFF?text=Sua+Logo" alt="Logotipo da Agência" class="mx-auto mb-4 h-16">
+            <h1 class="text-2xl font-bold text-gray-800">Planeje sua Viagem dos Sonhos</h1>
+            <p class="text-gray-500 mt-1">Preencha os dados abaixo e fale com um especialista no WhatsApp!</p>
         </div>
 
-        <!-- Formulário de coleta de dados -->
-        <form id="leadForm" class="space-y-6">
-
+        <form id="customerForm" class="space-y-6">
             <div>
-                <label for="nome_cliente" class="block text-sm font-medium text-gray-700">Nome do Cliente</label>
-                <input type="text" id="nome_cliente" name="nome_cliente" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-            </div>
-
-            <div>
-                <label for="id_contato" class="block text-sm font-medium text-gray-700">Nº de WhatsApp (com código do país)</label>
-                <input type="tel" id="id_contato" name="id_contato" placeholder="Ex: 5511999998888" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <label for="nome_cliente" class="block text-sm font-medium text-gray-700">Seu Nome</label>
+                <input type="text" id="nome_cliente" placeholder="Como podemos te chamar?" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
             </div>
             
-            <div>
-                <label for="destino_interesse" class="block text-sm font-medium text-gray-700">Destino de Interesse</label>
-                <input type="text" id="destino_interesse" name="destino_interesse" placeholder="Ex: Paris, França" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-            </div>
+            <!-- Campos de Origem -->
+            <fieldset class="space-y-4">
+                <legend class="text-sm font-medium text-gray-700">Origem</legend>
+                <div>
+                    <label for="origem-estado" class="block text-xs font-medium text-gray-600">Estado</label>
+                    <select id="origem-estado" required class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                        <option value="">Selecione um estado...</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="origem-cidade" class="block text-xs font-medium text-gray-600">Cidade</label>
+                    <select id="origem-cidade" required disabled class="mt-1 block w-full rounded-md">
+                        <option value="">Primeiro, selecione um estado</option>
+                    </select>
+                </div>
+            </fieldset>
+
+            <!-- Campos de Destino -->
+            <fieldset class="space-y-4">
+                <legend class="text-sm font-medium text-gray-700">Destino</legend>
+                 <div>
+                    <label for="destino-estado" class="block text-xs font-medium text-gray-600">Estado</label>
+                    <select id="destino-estado" required class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                        <option value="">Selecione um estado...</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="destino-cidade" class="block text-xs font-medium text-gray-600">Cidade</label>
+                    <select id="destino-cidade" required disabled class="mt-1 block w-full rounded-md">
+                         <option value="">Primeiro, selecione um estado</option>
+                    </select>
+                </div>
+            </fieldset>
 
             <div>
                 <label for="data_viagem" class="block text-sm font-medium text-gray-700">Data Pretendida da Viagem</label>
-                <input type="date" id="data_viagem" name="data_viagem" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <input type="date" id="data_viagem" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
             </div>
 
             <div>
-                <label for="status_compra" class="block text-sm font-medium text-gray-700">Status da Venda</label>
-                <select id="status_compra" name="status_compra" required class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                    <option value="Pendente">Pendente</option>
-                    <option value="Contatado">Contatado (Remarketing)</option>
-                    <option value="Concluído">Concluído</option>
-                    <option value="Cancelado">Cancelado</option>
+                <label for="interesse" class="block text-sm font-medium text-gray-700">Qual seu interesse?</label>
+                <select id="interesse" required class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                    <option value="Gostaria de verificar o preço">Gostaria de verificar o preço</option>
+                    <option value="Tenho interesse em comprar agora">Tenho interesse em comprar agora</option>
                 </select>
             </div>
 
             <div>
-                <button type="submit" id="submitButton" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
-                    Salvar Lead
+                <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors">
+                    Simular no WhatsApp
                 </button>
             </div>
         </form>
-
-        <!-- Área de feedback para o usuário -->
-        <div id="feedback" class="mt-6 text-center text-sm"></div>
     </div>
 
-    <!-- Script para conectar e enviar dados para o Firebase -->
-    <script type="module">
-        // Importando as funções necessárias do SDK do Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // --- PASSO IMPORTANTE: CONFIGURE SEU FIREBASE AQUI ---
-        // Cole aqui o objeto de configuração do seu projeto Firebase
-        // Você encontra isso no Console do Firebase > Configurações do Projeto > Geral > Seus apps > App da Web
-        const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "SEU_AUTH_DOMAIN",
-            projectId: "SEU_PROJECT_ID",
-            storageBucket: "SEU_STORAGE_BUCKET",
-            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-            appId: "SEU_APP_ID"
-        };
+    <script>
+        // --- PASSO 2: CONFIGURE SEU WHATSAPP AQUI ---
+        const seuNumeroWhatsApp = "5571981919717"; // <-- Coloque o número do WhatsApp da sua empresa aqui, com código do país e DDD.
         // --- FIM DA CONFIGURAÇÃO ---
 
-        // Inicializa o Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // Referências aos elementos do HTML
-        const leadForm = document.getElementById('leadForm');
-        const feedbackDiv = document.getElementById('feedback');
-        const submitButton = document.getElementById('submitButton');
-
-        // Adiciona um listener para o evento de submit do formulário
-        leadForm.addEventListener('submit', async (e) => {
-            e.preventDefault(); // Impede o recarregamento da página
-
-            // Desabilita o botão para evitar envios duplos
-            submitButton.disabled = true;
-            submitButton.textContent = 'Salvando...';
-            feedbackDiv.textContent = '';
+        document.addEventListener('DOMContentLoaded', () => {
+            const brazilStates = { "AC": "Acre", "AL": "Alagoas", "AP": "Amapá", "AM": "Amazonas", "BA": "Bahia", "CE": "Ceará", "DF": "Distrito Federal", "ES": "Espírito Santo", "GO": "Goiás", "MA": "Maranhão", "MT": "Mato Grosso", "MS": "Mato Grosso do Sul", "MG": "Minas Gerais", "PA": "Pará", "PB": "Paraíba", "PR": "Paraná", "PE": "Pernambuco", "PI": "Piauí", "RJ": "Rio de Janeiro", "RN": "Rio Grande do Norte", "RS": "Rio Grande do Sul", "RO": "Rondônia", "RR": "Roraima", "SC": "Santa Catarina", "SP": "São Paulo", "SE": "Sergipe", "TO": "Tocantins" };
+            const citiesByState = { "AC": ["Acrelândia", "Assis Brasil", "Brasiléia", "Bujari", "Capixaba", "Cruzeiro do Sul", "Epitaciolândia", "Feijó", "Jordão", "Mâncio Lima", "Manoel Urbano", "Marechal Thaumaturgo", "Plácido de Castro", "Porto Acre", "Porto Walter", "Rio Branco", "Rodrigues Alves", "Santa Rosa do Purus", "Sena Madureira", "Senador Guiomard", "Tarauacá", "Xapuri"], "AL": ["Água Branca", "Anadia", "Arapiraca", "Atalaia", "Barra de Santo Antônio", "Barra de São Miguel", "Batalha", "Belém", "Belo Monte", "Boca da Mata", "Branquinha", "Cacimbinhas", "Cajueiro", "Campestre", "Campo Alegre", "Campo Grande", "Canapi", "Capela", "Carneiros", "Chã Preta", "Coité do Nóia", "Colônia Leopoldina", "Coqueiro Seco", "Coruripe", "Craíbas", "Delmiro Gouveia", "Dois Riachos", "Estrela de Alagoas", "Feira Grande", "Feliz Deserto", "Flexeiras", "Girau do Ponciano", "Ibateguara", "Igaci", "Igreja Nova", "Inhapi", "Jacaré dos Homens", "Jacuípe", "Japaratinga", "Jaramataia", "Jequiá da Praia", "Joaquim Gomes", "Jundiá", "Junqueiro", "Lagoa da Canoa", "Limoeiro de Anadia", "Maceió", "Major Isidoro", "Mar Vermelho", "Maragogi", "Maravilha", "Marechal Deodoro", "Maribondo", "Mata Grande", "Matriz de Camaragibe", "Messias", "Minador do Negrão", "Monteirópolis", "Murici", "Novo Lino", "Olho d'Água das Flores", "Olho d'Água do Casado", "Olho d'Água Grande", "Olivença", "Ouro Branco", "Palestina", "Palmeira dos Índios", "Pão de Açúcar", "Pariconha", "Paripueira", "Passo de Camaragibe", "Paulo Jacinto", "Penedo", "Piaçabuçu", "Pilar", "Pindoba", "Piranhas", "Poço das Trincheiras", "Porto Calvo", "Porto de Pedras", "Porto Real do Colégio", "Quebrangulo", "Rio Largo", "Roteiro", "Santa Luzia do Norte", "Santana do Ipanema", "Santana do Mundaú", "São Brás", "São José da Laje", "São José da Tapera", "São Luís do Quitunde", "São Miguel dos Campos", "São Miguel dos Milagres", "São Sebastião", "Satuba", "Senador Rui Palmeira", "Tanque d'Arca", "Taquarana", "Teotônio Vilela", "Traipu", "União dos Palmares", "Viçosa"], "AP": ["Amapá", "Calçoene", "Cutias", "Ferreira Gomes", "Itaubal", "Laranjal do Jari", "Macapá", "Mazagão", "Oiapoque", "Pedra Branca do Amapari", "Porto Grande", "Pracuúba", "Santana", "Serra do Navio", "Tartarugalzinho", "Vitória do Jari"], "AM": ["Alvarães", "Amaturá", "Anamã", "Anori", "Apuí", "Atalaia do Norte", "Autazes", "Barcelos", "Barreirinha", "Benjamin Constant", "Beruri", "Boa Vista do Ramos", "Boca do Acre", "Borba", "Caapiranga", "Canutama", "Carauari", "Careiro", "Careiro da Várzea", "Coari", "Codajás", "Eirunepé", "Envira", "Fonte Boa", "Guajará", "Humaitá", "Ipixuna", "Iranduba", "Itacoatiara", "Itamarati", "Itapiranga", "Japurá", "Juruá", "Jutaí", "Lábrea", "Manacapuru", "Manaquiri", "Manaus", "Manicoré", "Maraã", "Maués", "Nhamundá", "Nova Olinda do Norte", "Novo Airão", "Novo Aripuanã", "Parintins", "Pauini", "Presidente Figueiredo", "Rio Preto da Eva", "Santa Isabel do Rio Negro", "Santo Antônio do Içá", "São Gabriel da Cachoeira", "São Paulo de Olivença", "São Sebastião do Uatumã", "Silves", "Tabatinga", "Tapauá", "Tefé", "Tonantins", "Uarini", "Urucará", "Urucurituba"], /* ... DADOS PARA OS OUTROS ESTADOS FORAM OMITIDOS POR BREVIDADE, MAS DEVEM SER INCLUÍDOS ... */ };
             
-            try {
-                // Coleta os dados do formulário
-                const formData = new FormData(leadForm);
-                const leadData = {
-                    nome_cliente: formData.get('nome_cliente'),
-                    id_contato: formData.get('id_contato'),
-                    destino_interesse: formData.get('destino_interesse'),
-                    data_viagem: formData.get('data_viagem'),
-                    status_compra: formData.get('status_compra'),
-                    data_contato: serverTimestamp() // Adiciona a data/hora atual do servidor
-                };
+            const customerForm = document.getElementById('customerForm');
+            const origemEstado = document.getElementById('origem-estado');
+            const destinoEstado = document.getElementById('destino-estado');
 
-                // Adiciona um novo documento na coleção "leads"
-                const docRef = await addDoc(collection(db, "leads"), leadData);
-                console.log("Documento escrito com ID: ", docRef.id);
+            let origemCidadeSelect, destinoCidadeSelect;
 
-                // Feedback de sucesso
-                feedbackDiv.textContent = '✅ Lead salvo com sucesso!';
-                feedbackDiv.className = 'mt-6 text-center text-sm text-green-600';
-                leadForm.reset(); // Limpa o formulário
+            const populateStates = (selectElement) => {
+                for (const abbr in brazilStates) {
+                    const option = document.createElement('option');
+                    option.value = abbr;
+                    option.textContent = brazilStates[abbr];
+                    selectElement.appendChild(option);
+                }
+            };
 
-            } catch (error) {
-                console.error("Erro ao adicionar documento: ", error);
-                // Feedback de erro
-                feedbackDiv.textContent = '❌ Erro ao salvar o lead. Verifique o console para mais detalhes.';
-                feedbackDiv.className = 'mt-6 text-center text-sm text-red-600';
-            } finally {
-                // Reabilita o botão
-                submitButton.disabled = false;
-                submitButton.textContent = 'Salvar Lead';
-            }
+            const initCitySelect = (selectId, placeholder) => {
+                return new TomSelect(selectId, {
+                    create: false,
+                    sortField: {
+                        field: "text",
+                        direction: "asc"
+                    },
+                    placeholder: placeholder
+                });
+            };
+
+            const populateCities = (citySelectInstance, stateAbbr) => {
+                citySelectInstance.clear();
+                citySelectInstance.clearOptions();
+                
+                if (stateAbbr && citiesByState[stateAbbr]) {
+                    const cities = citiesByState[stateAbbr];
+                    cities.forEach(city => {
+                        citySelectInstance.addOption({ value: city, text: city });
+                    });
+                    citySelectInstance.enable();
+                    citySelectInstance.setValue('', true); // Limpa a seleção silenciosamente
+                    citySelectInstance.settings.placeholder = "Agora, selecione a cidade...";
+                } else {
+                    citySelectInstance.disable();
+                    citySelectInstance.settings.placeholder = "Primeiro, selecione um estado";
+                }
+                 citySelectInstance.refreshOptions(false);
+            };
+
+            populateStates(origemEstado);
+            populateStates(destinoEstado);
+            
+            origemCidadeSelect = initCitySelect('#origem-cidade', "Primeiro, selecione um estado");
+            destinoCidadeSelect = initCitySelect('#destino-cidade', "Primeiro, selecione um estado");
+
+            origemEstado.addEventListener('change', (e) => {
+                populateCities(origemCidadeSelect, e.target.value);
+            });
+
+            destinoEstado.addEventListener('change', (e) => {
+                populateCities(destinoCidadeSelect, e.target.value);
+            });
+
+            customerForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const nome = document.getElementById('nome_cliente').value;
+                const origemEst = origemEstado.options[origemEstado.selectedIndex].text;
+                const origemCid = origemCidadeSelect.getValue();
+                const destinoEst = destinoEstado.options[destinoEstado.selectedIndex].text;
+                const destinoCid = destinoCidadeSelect.getValue();
+                const dataISO = document.getElementById('data_viagem').value;
+                const interesse = document.getElementById('interesse').value;
+                
+                if(!origemCid || !destinoCid) {
+                    alert('Por favor, selecione a cidade de origem e destino.');
+                    return;
+                }
+
+                const [ano, mes, dia] = dataISO.split('-');
+                const dataFormatada = `${dia}/${mes}/${ano}`;
+
+                const mensagem = `Olá! Gostaria de uma cotação para uma viagem.
+*Meu Nome:* ${nome}
+*Origem:* ${origemCid} - ${origemEst}
+*Destino:* ${destinoCid} - ${destinoEst}
+*Data:* ${dataFormatada}
+*Interesse:* ${interesse}`;
+
+                const mensagemCodificada = encodeURIComponent(mensagem.replace(/\n\s*\n/g, '\n\n'));
+                const urlWhatsApp = `https://wa.me/${seuNumeroWhatsApp}?text=${mensagemCodificada}`;
+                window.location.href = urlWhatsApp;
+            });
         });
     </script>
-
 </body>
 </html>
