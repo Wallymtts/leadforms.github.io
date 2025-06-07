@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Leads de Viagem</title>
+    <!-- Incluindo o Tailwind CSS para um design moderno -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Usando a fonte Inter para um visual mais agradável */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+    <div class="w-full max-w-lg mx-auto bg-white rounded-xl shadow-lg p-8 m-4">
+        
+        <div class="mb-6 text-center">
+            <h1 class="text-2xl font-bold text-gray-800">Registro de Novo Lead de Viagem</h1>
+            <p class="text-gray-500 mt-1">Preencha os dados do cliente para o remarketing.</p>
+        </div>
+
+        <!-- Formulário de coleta de dados -->
+        <form id="leadForm" class="space-y-6">
+
+            <div>
+                <label for="nome_cliente" class="block text-sm font-medium text-gray-700">Nome do Cliente</label>
+                <input type="text" id="nome_cliente" name="nome_cliente" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
+
+            <div>
+                <label for="id_contato" class="block text-sm font-medium text-gray-700">Nº de WhatsApp (com código do país)</label>
+                <input type="tel" id="id_contato" name="id_contato" placeholder="Ex: 5511999998888" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
+            
+            <div>
+                <label for="destino_interesse" class="block text-sm font-medium text-gray-700">Destino de Interesse</label>
+                <input type="text" id="destino_interesse" name="destino_interesse" placeholder="Ex: Paris, França" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
+
+            <div>
+                <label for="data_viagem" class="block text-sm font-medium text-gray-700">Data Pretendida da Viagem</label>
+                <input type="date" id="data_viagem" name="data_viagem" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
+
+            <div>
+                <label for="status_compra" class="block text-sm font-medium text-gray-700">Status da Venda</label>
+                <select id="status_compra" name="status_compra" required class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                    <option value="Pendente">Pendente</option>
+                    <option value="Contatado">Contatado (Remarketing)</option>
+                    <option value="Concluído">Concluído</option>
+                    <option value="Cancelado">Cancelado</option>
+                </select>
+            </div>
+
+            <div>
+                <button type="submit" id="submitButton" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                    Salvar Lead
+                </button>
+            </div>
+        </form>
+
+        <!-- Área de feedback para o usuário -->
+        <div id="feedback" class="mt-6 text-center text-sm"></div>
+    </div>
+
+    <!-- Script para conectar e enviar dados para o Firebase -->
+    <script type="module">
+        // Importando as funções necessárias do SDK do Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- PASSO IMPORTANTE: CONFIGURE SEU FIREBASE AQUI ---
+        // Cole aqui o objeto de configuração do seu projeto Firebase
+        // Você encontra isso no Console do Firebase > Configurações do Projeto > Geral > Seus apps > App da Web
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_AUTH_DOMAIN",
+            projectId: "SEU_PROJECT_ID",
+            storageBucket: "SEU_STORAGE_BUCKET",
+            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
+        // --- FIM DA CONFIGURAÇÃO ---
+
+        // Inicializa o Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Referências aos elementos do HTML
+        const leadForm = document.getElementById('leadForm');
+        const feedbackDiv = document.getElementById('feedback');
+        const submitButton = document.getElementById('submitButton');
+
+        // Adiciona um listener para o evento de submit do formulário
+        leadForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Impede o recarregamento da página
+
+            // Desabilita o botão para evitar envios duplos
+            submitButton.disabled = true;
+            submitButton.textContent = 'Salvando...';
+            feedbackDiv.textContent = '';
+            
+            try {
+                // Coleta os dados do formulário
+                const formData = new FormData(leadForm);
+                const leadData = {
+                    nome_cliente: formData.get('nome_cliente'),
+                    id_contato: formData.get('id_contato'),
+                    destino_interesse: formData.get('destino_interesse'),
+                    data_viagem: formData.get('data_viagem'),
+                    status_compra: formData.get('status_compra'),
+                    data_contato: serverTimestamp() // Adiciona a data/hora atual do servidor
+                };
+
+                // Adiciona um novo documento na coleção "leads"
+                const docRef = await addDoc(collection(db, "leads"), leadData);
+                console.log("Documento escrito com ID: ", docRef.id);
+
+                // Feedback de sucesso
+                feedbackDiv.textContent = '✅ Lead salvo com sucesso!';
+                feedbackDiv.className = 'mt-6 text-center text-sm text-green-600';
+                leadForm.reset(); // Limpa o formulário
+
+            } catch (error) {
+                console.error("Erro ao adicionar documento: ", error);
+                // Feedback de erro
+                feedbackDiv.textContent = '❌ Erro ao salvar o lead. Verifique o console para mais detalhes.';
+                feedbackDiv.className = 'mt-6 text-center text-sm text-red-600';
+            } finally {
+                // Reabilita o botão
+                submitButton.disabled = false;
+                submitButton.textContent = 'Salvar Lead';
+            }
+        });
+    </script>
+
+</body>
+</html>
